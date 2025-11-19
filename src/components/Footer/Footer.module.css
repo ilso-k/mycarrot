@@ -1,0 +1,22 @@
+.footer {
+    padding: 32px 16px;
+    background-color: var(--gray-800);
+    color: var(--gray-400);
+    font-size: 13px;
+    margin-top: 40px;
+}
+
+.container {
+    max-width: 980px;
+    margin: 0 auto;
+}
+
+.links {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.copyright {
+    color: var(--gray-500);
+}

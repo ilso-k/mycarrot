@@ -1,0 +1,63 @@
+.card {
+    display: block;
+    width: 100%;
+    cursor: pointer;
+    padding-bottom: 16px;
+}
+
+.imageWrapper {
+    width: 100%;
+    padding-top: 100%;
+    /* 1:1 Aspect Ratio */
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: var(--gray-100);
+    margin-bottom: 12px;
+}
+
+.image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.2s ease;
+}
+
+.card:hover .image {
+    transform: scale(1.02);
+}
+
+.title {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--gray-900);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5;
+}
+
+.price {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 4px;
+}
+
+.region {
+    font-size: 13px;
+    color: var(--gray-900);
+    margin-bottom: 4px;
+}
+
+.counts {
+    font-size: 13px;
+    color: var(--gray-600);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}

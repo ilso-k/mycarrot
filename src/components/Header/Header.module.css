@@ -1,0 +1,101 @@
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    height: 64px;
+    display: flex;
+    align-items: center;
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    margin-right: 24px;
+}
+
+.logo svg {
+    width: 65px;
+    height: auto;
+}
+
+.searchBar {
+    flex: 1;
+    max-width: 400px;
+    position: relative;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 9px 12px;
+    background-color: var(--gray-100);
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 16px;
+    color: var(--gray-900);
+    outline: none;
+    transition: background-color 0.2s;
+}
+
+.searchInput:focus {
+    background-color: var(--white);
+    border-color: var(--gray-400);
+}
+
+.searchInput::placeholder {
+    color: var(--gray-600);
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: 24px;
+}
+
+.navButton {
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gray-900);
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.navButton:hover {
+    background-color: var(--gray-100);
+}
+
+.downloadButton {
+    background-color: var(--gray-100);
+}
+
+.betaTag {
+    font-size: 10px;
+    color: var(--daangn-orange);
+    margin-left: 4px;
+    vertical-align: top;
+}
+
+@media (max-width: 768px) {
+    .searchBar {
+        display: none;
+        /* Hide search on mobile for simplicity in this clone, or make it an icon */
+    }
+
+    .nav {
+        gap: 8px;
+    }
+}
