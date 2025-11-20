@@ -6,18 +6,21 @@ import styles from './page.module.css';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { uploadMultipleImages } from '@/lib/uploadImage';
 
 export default function UploadPage() {
-    const [images, setImages] = useState<string[]>([]);
+    const [imageFiles, setImageFiles] = useState<File[]>([]);
+    const [imagePreviews, setImagePreviews] = useState<string[]>([]);
     const [title, setTitle] = useState('');
     const [category, setCategory] = useState('');
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState('');
-    const [region, setRegion] = useState(''); // New state for region
+    const [region, setRegion] = useState('');
     const [showCategoryModal, setShowCategoryModal] = useState(false);
+    const [uploading, setUploading] = useState(false);
 
     const router = useRouter();
-    const { user } = useAuth(); // Get user info
+    const { user } = useAuth();
 
     const categories = [
         '디지털기기', '생활가전', '가구/인테리어', '생활/주방',
@@ -28,7 +31,14 @@ export default function UploadPage() {
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
-            setImages([...images, URL.createObjectURL(e.target.files[0])]);
+            const file = e.target.files[0];
+
+            // Store the actual file
+            setImageFiles([...imageFiles, file]);
+
+            // Create preview URL for display
+            const previewUrl = URL.createObjectURL(file);
+            setImagePreviews([...imagePreviews, previewUrl]);
         }
     };
 
@@ -38,7 +48,16 @@ export default function UploadPage() {
             return;
         }
 
+        setUploading(true);
+
         try {
+            // Upload images to Firebase Storage
+            let imageUrls: string[] = [];
+            if (imageFiles.length > 0) {
+                imageUrls = await uploadMultipleImages(imageFiles);
+            }
+
+            // Send data to API
             const response = await fetch('/api/articles', {
                 method: 'POST',
                 headers: {
@@ -49,7 +68,7 @@ export default function UploadPage() {
                     category,
                     price,
                     description,
-                    images,
+                    images: imageUrls, // Use Firebase Storage URLs
                     region,
                     sellerName: user?.name || '익명'
                 }),
@@ -58,13 +77,15 @@ export default function UploadPage() {
             if (response.ok) {
                 alert('상품이 등록되었습니다!');
                 router.push('/');
-                router.refresh(); // Refresh server components
+                router.refresh();
             } else {
                 alert('등록에 실패했습니다.');
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('오류가 발생했습니다.');
+            alert('오류가 발생했습니다: ' + (error as Error).message);
+        } finally {
+            setUploading(false);
         }
     };
 
@@ -75,7 +96,13 @@ export default function UploadPage() {
                 <div className={styles.uploadHeader}>
                     <button className={styles.closeButton} onClick={() => router.back()}>닫기</button>
                     <h1 className={styles.title}>중고거래 글쓰기</h1>
-                    <button className={styles.submitButton} onClick={handleSubmit}>완료</button>
+                    <button
+                        className={styles.submitButton}
+                        onClick={handleSubmit}
+                        disabled={uploading}
+                    >
+                        {uploading ? '업로드 중...' : '완료'}
+                    </button>
                 </div>
 
                 <div className={styles.form}>
@@ -83,9 +110,9 @@ export default function UploadPage() {
                         <label className={styles.imageUploadButton}>
                             <input type="file" accept="image/*" multiple onChange={handleImageUpload} hidden />
                             <span>📷</span>
-                            <span>{images.length}/10</span>
+                            <span>{imagePreviews.length}/10</span>
                         </label>
-                        {images.map((img, idx) => (
+                        {imagePreviews.map((img: string, idx: number) => (
                             <div key={idx} className={styles.imagePreview} style={{ backgroundImage: `url(${img})` }}></div>
                         ))}
                     </div>
