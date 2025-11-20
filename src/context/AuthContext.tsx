@@ -12,6 +12,7 @@ interface User {
 interface AuthContextType {
     user: User | null;
     login: (email: string) => void;
+    signup: (email: string, name: string) => void;
     loginWithGoogle: () => void;
     logout: () => void;
 }
@@ -41,6 +42,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         router.push('/');
     };
 
+    const signup = (email: string, name: string) => {
+        const newUser = {
+            name: name,
+            email: email,
+            avatar: 'https://picsum.photos/seed/' + name + '/100/100',
+        };
+        setUser(newUser);
+        localStorage.setItem('daangn_user', JSON.stringify(newUser));
+        alert('회원가입이 완료되었습니다!');
+        router.push('/');
+    };
+
     const loginWithGoogle = () => {
         const newUser = {
             name: 'Google User',
@@ -59,7 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, loginWithGoogle, logout }}>
+        <AuthContext.Provider value={{ user, login, signup, loginWithGoogle, logout }}>
             {children}
         </AuthContext.Provider>
     );

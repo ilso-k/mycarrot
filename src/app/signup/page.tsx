@@ -2,21 +2,37 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import styles from './page.module.css';
+import { useRouter } from 'next/navigation';
+import styles from '../login/page.module.css';
 import { useAuth } from '@/context/AuthContext';
 
-export default function LoginPage() {
+export default function SignupPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { login, loginWithGoogle } = useAuth();
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [name, setName] = useState('');
+    const { signup, loginWithGoogle } = useAuth();
+    const router = useRouter();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (email && password) {
-            login(email);
-        } else {
-            alert('이메일과 비밀번호를 입력해주세요.');
+
+        if (!email || !password || !confirmPassword || !name) {
+            alert('모든 항목을 입력해주세요.');
+            return;
         }
+
+        if (password !== confirmPassword) {
+            alert('비밀번호가 일치하지 않습니다.');
+            return;
+        }
+
+        if (password.length < 6) {
+            alert('비밀번호는 최소 6자 이상이어야 합니다.');
+            return;
+        }
+
+        signup(email, name);
     };
 
     return (
@@ -29,7 +45,18 @@ export default function LoginPage() {
                 </Link>
             </div>
 
+            <h1 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '24px', textAlign: 'center' }}>
+                회원가입
+            </h1>
+
             <form className={styles.form} onSubmit={handleSubmit}>
+                <input
+                    type="text"
+                    placeholder="이름"
+                    className={styles.input}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                />
                 <input
                     type="email"
                     placeholder="이메일"
@@ -39,13 +66,20 @@ export default function LoginPage() {
                 />
                 <input
                     type="password"
-                    placeholder="비밀번호"
+                    placeholder="비밀번호 (최소 6자)"
                     className={styles.input}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
+                <input
+                    type="password"
+                    placeholder="비밀번호 확인"
+                    className={styles.input}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                />
                 <button type="submit" className={styles.loginButton}>
-                    로그인
+                    가입하기
                 </button>
             </form>
 
@@ -62,7 +96,7 @@ export default function LoginPage() {
             </button>
 
             <div className={styles.signupLink}>
-                아직 계정이 없으신가요? <Link href="/signup">회원가입</Link>
+                이미 계정이 있으신가요? <Link href="/login">로그인</Link>
             </div>
         </div>
     );
