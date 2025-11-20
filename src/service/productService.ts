@@ -15,12 +15,19 @@ class ProductService {
 
     async getAll(): Promise<Product[]> {
         try {
-            const q = query(collection(db, this.collectionName), orderBy('createdAt', 'desc'));
-            const querySnapshot = await getDocs(q);
-            return querySnapshot.docs.map(doc => ({
+            // Temporarily removed orderBy to avoid index requirement
+            const querySnapshot = await getDocs(collection(db, this.collectionName));
+            const products = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             } as Product));
+
+            // Sort in memory instead
+            return products.sort((a, b) => {
+                const dateA = new Date(a.createdAt || 0).getTime();
+                const dateB = new Date(b.createdAt || 0).getTime();
+                return dateB - dateA; // Descending order
+            });
         } catch (error) {
             console.error("Error getting documents: ", error);
             return [];
